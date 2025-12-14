@@ -1,0 +1,208 @@
+# ============================================
+# GRC Wrapped Project - Comprehensive .gitignore
+# ============================================
+
+# ============================================
+# Database & Examples (exclude entire directories)
+# ============================================
+db/
+examples/
+
+# ============================================
+# Secrets & Environment Variables
+# ============================================
+.env
+.env.local
+.env.*.local
+*.env
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# ============================================
+# Go (Backend - grc-api)
+# ============================================
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+grc-api/grc-api
+grc-api/main
+*.test
+*.out
+
+# Go workspace
+go.work
+go.work.sum
+
+# Go build cache
+.cache/
+
+# Go coverage
+*.coverprofile
+coverage.txt
+coverage.html
+
+# Vendor directories (if using vendoring)
+vendor/
+
+# ============================================
+# Node.js & npm (Frontend - grc-app)
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Lock files (uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ============================================
+# Build & Dist Directories
+# ============================================
+dist/
+dist-ssr/
+build/
+out/
+*.local
+
+# ============================================
+# Debug Logs
+# ============================================
+debug_logs/
+logs/
+*.log
+
+# ============================================
+# IDEs & Editors
+# ============================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains IDEs (IntelliJ, GoLand, WebStorm)
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ============================================
+# Operating Systems
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# Vite (Frontend build tool)
+# ============================================
+.vite/
+
+# ============================================
+# TypeScript
+# ============================================
+*.tsbuildinfo
+
+# ============================================
+# Testing
+# ============================================
+coverage/
+.nyc_output/
+*.lcov
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.cache
+.temp/
+tmp/
+
+# ============================================
+# Postman (if you have sensitive collections)
+# ============================================
+# postman/
+# Uncomment above if you want to exclude Postman files
+
+# ============================================
+# Compiled Python (for scripts/)
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# ============================================
+# Docker (if used)
+# ============================================
+*.dockerfile.local
+docker-compose.override.yml
+
+# ============================================
+# Database Files (if any local DB files)
+# ============================================
+*.sqlite
+*.sqlite3
+*.db
+
+# ============================================
+# Other
+# ============================================
+.DS_Store?
+.Spotlight-V100
+.Trashes
+ehthumbs.db

@@ -1,0 +1,78 @@
+You are parsing a running club email to extract structured data about athletes, races, and workouts.
+
+{{.AthleteRoster}}
+
+Extract the following information from this email and return it as valid JSON matching this exact schema:
+
+{
+  "athletes": [{"name": "string"}],
+  "races": [{"name": "string", "date": "YYYY-MM-DD", "distance": "string", "type": "string"}],
+  "race_results": [{
+    "athlete_name": "Full Name",
+    "race_name": "string",
+    "time": "H:MM:SS",
+    "position": number or null,
+    "is_pr": boolean,
+    "is_club_record": boolean,
+    "notes": "string",
+    "tags": ["string"],
+    "flagged": boolean,
+    "flag_reason": "string or empty"
+  }],
+  "workouts": [{
+    "date": "YYYY-MM-DD",
+    "location": "string",
+    "description": "string",
+    "groups": [{
+      "group_name": "string (e.g., 'Group 1', 'Group 2')",
+      "segments": [{
+        "reps": number,
+        "distance": "string (e.g., '2k', '400m')",
+        "target_pace": "string (e.g., '72 seconds per 400m', '5:00 per mile')",
+        "rest_time": "string (e.g., '2:00', '45 seconds')",
+        "description": "string (brief description of the segment, can be empty if unclear)"
+      }]
+    }]
+  }]
+}
+
+Rules:
+1. CRITICAL: When you see a name (nickname or first name), match it to the FULL NAME from the athlete roster above
+2. For race results, use the exact full name from the roster in the "athlete_name" field
+3. FLAGGING: Set "flagged": true and provide "flag_reason" when:
+   - A name is ambiguous (e.g., "Tom" could match multiple athletes in the roster)
+   - A name is not found in the roster
+   - You are uncertain about the athlete match
+   - Example: {"athlete_name": "Zach H", "flagged": true, "flag_reason": "ambiguous - could be Zach Herriott or Zack Holden"}
+4. Extract ALL athletes mentioned in race results
+5. Parse times carefully (e.g., "2:19:20" for marathon)
+6. When determining distance, use context and associated times
+7. Race types provide context for distance interpretation. Use these guidelines:
+    - Track and Field (TF): 800m, 1500m, 3000m, 5000m, 10000m
+    - Cross Country (XC): 6k, 8k, 10k
+    - Road Race (RD): 5k, 10k, half marathon, marathon, 10 mile
+    - Trail (TR): varies greatly in distance
+    - Ultra (UL): any distance 50k or longer
+8. Use the following abbreviations for race types: TF (Track), XC (Cross Country), RD (Road), TR (Trail), UL (Ultra)
+9. A single race may have multiple distances, and such races should be treated as different races using context and times to determine race + distance is key 
+10. Mark "is_pr" as true if the text mentions "PR" for that athlete
+11. Mark "is_club_record" as true if and only if a performance is mentioned to be a club record or broken club record.
+12. Extract position if mentioned (e.g., "47th" -> 47)
+13. Include any notable comments about the athlete's performance in the "notes" field - keep notes specific to that individual athlete
+14. Extract adjectives or fun phrases describing the performance and store in "tags" field as an array
+15. For workouts, parse the date from the email subject/body
+16. Break down workout plans into groups and segments
+17. Parse target paces clearly (e.g., "72" in track context means "72 seconds per 400m"), target paces must be stores in a single string
+18. If information is missing, use empty strings, empty arrays, or null values
+19. For workout segments, provide a brief description if possible, but it's okay to leave empty
+20. Workouts typically have multiple groups (e.g., Group 1, Group 2, Group 3), but may have fewer in some cases
+21. Return ONLY valid JSON, no additional text
+
+Email to parse:
+
+Subject: {{.Subject}}
+Date: {{.Date}}
+From: {{.Sender}}
+
+Body:
+{{.Body}}

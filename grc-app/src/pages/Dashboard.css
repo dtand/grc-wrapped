@@ -1,0 +1,128 @@
+/* Dashboard.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #f8f9fa;
+  height: 100vh;
+  overflow-y: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.dashboard-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #2d7ff9 0%, #43a047 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-subtitle {
+  font-size: 1.3rem;
+  color: #666;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.dashboard-stats-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2.5rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.dashboard-stat-item {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 160px;
+  transition: box-shadow 0.2s;
+}
+.dashboard-stat-item:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+}
+.dashboard-stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.dashboard-stat-value {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #2d7ff9;
+  font-family: 'Poppins', sans-serif;
+}
+.dashboard-stat-label {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 0.3rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.dashboard-bubble-chart {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background: transparent;
+  display: block;
+  margin-top: -150px;
+}
+
+.dashboard-bubble-chart circle {
+  transition: r 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+}
+
+.dashboard-bubble-chart circle:hover {
+  filter: drop-shadow(0 0 15px rgba(0,0,0,0.2));
+  r: 1.1;
+}
+
+.participation-timeline-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.participation-timeline {
+  display: block;
+}
+
+.timeline-node {
+  transition: all 0.2s ease;
+}
+
+.timeline-tooltip {
+  background: #333;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  font-family: 'Inter', sans-serif;
+}
+
+.timeline-tooltip-race {
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.timeline-tooltip-date {
+  font-size: 11px;
+  opacity: 0.85;
+}

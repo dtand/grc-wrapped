@@ -1,0 +1,885 @@
+{
+  "info": {
+    "name": "Running Club API",
+    "description": "Complete API collection for the Running Club application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "adminApiKey",
+      "value": "your-admin-api-key-here",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Athletes",
+      "item": [
+        {
+          "name": "List Athletes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/athletes?name=&gender=&active=&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["athletes"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "description": "Filter by athlete name (partial match)"
+                },
+                {
+                  "key": "gender",
+                  "value": "",
+                  "description": "Filter by gender (M, F, NB)"
+                },
+                {
+                  "key": "active",
+                  "value": "",
+                  "description": "Filter by active status (true/false)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Limit number of results"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ]
+            },
+            "description": "List all athletes with optional filtering and pagination"
+          }
+        },
+        {
+          "name": "Get Athlete by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/athletes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["athletes", "1"]
+            },
+            "description": "Get a specific athlete by ID"
+          }
+        },
+        {
+          "name": "Create Athlete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"gender\": \"M\",\n  \"active\": true,\n  \"website_url\": \"https://johndoe.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/athletes",
+              "host": ["{{baseUrl}}"],
+              "path": ["athletes"]
+            },
+            "description": "Create a new athlete"
+          }
+        },
+        {
+          "name": "Update Athlete",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"gender\": \"M\",\n  \"active\": true,\n  \"website_url\": \"https://johndoe.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/athletes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["athletes", "1"]
+            },
+            "description": "Update an existing athlete"
+          }
+        },
+        {
+          "name": "Delete Athlete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/athletes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["athletes", "1"]
+            },
+            "description": "Delete an athlete"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Races",
+      "item": [
+        {
+          "name": "List Races",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/races?name=&date=&distance=&email_id=&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["races"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "description": "Filter by race name (partial match)"
+                },
+                {
+                  "key": "date",
+                  "value": "",
+                  "description": "Filter by race date (exact or range)"
+                },
+                {
+                  "key": "distance",
+                  "value": "",
+                  "description": "Filter by race distance"
+                },
+                {
+                  "key": "email_id",
+                  "value": "",
+                  "description": "Filter by source email"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "List all races with optional filtering"
+          }
+        },
+        {
+          "name": "Get Race by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/races/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["races", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Race",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Spring 5K\",\n  \"date\": \"2025-04-15\",\n  \"distance\": \"5k\",\n  \"notes\": \"Annual spring race\",\n  \"email_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/races",
+              "host": ["{{baseUrl}}"],
+              "path": ["races"]
+            }
+          }
+        },
+        {
+          "name": "Update Race",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Spring 5K Updated\",\n  \"date\": \"2025-04-15\",\n  \"distance\": \"5k\",\n  \"notes\": \"Updated notes\",\n  \"email_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/races/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["races", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Race",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/races/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["races", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Race Results",
+      "item": [
+        {
+          "name": "List Race Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/race_results?athlete_id=&race_id=&is_pr=&tags=&position=&flagged=&email_id=&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["race_results"],
+              "query": [
+                {
+                  "key": "athlete_id",
+                  "value": "",
+                  "description": "Filter by athlete"
+                },
+                {
+                  "key": "race_id",
+                  "value": "",
+                  "description": "Filter by race"
+                },
+                {
+                  "key": "is_pr",
+                  "value": "",
+                  "description": "Filter by PR status"
+                },
+                {
+                  "key": "tags",
+                  "value": "",
+                  "description": "Filter by tags"
+                },
+                {
+                  "key": "position",
+                  "value": "",
+                  "description": "Filter by position"
+                },
+                {
+                  "key": "flagged",
+                  "value": "",
+                  "description": "Filter by flagged status"
+                },
+                {
+                  "key": "email_id",
+                  "value": "",
+                  "description": "Filter by source email"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Race Result by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/race_results/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["race_results", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Race Result",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"race_id\": 1,\n  \"athlete_id\": 1,\n  \"unknown_athlete_name\": \"\",\n  \"time\": \"20:30\",\n  \"pr_improvement\": \"-2:15\",\n  \"notes\": \"Great race!\",\n  \"position\": 5,\n  \"is_pr\": true,\n  \"tags\": [\"season_best\", \"course_record\"],\n  \"flagged\": false,\n  \"flag_reason\": \"\",\n  \"email_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/race_results",
+              "host": ["{{baseUrl}}"],
+              "path": ["race_results"]
+            }
+          }
+        },
+        {
+          "name": "Update Race Result",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"race_id\": 1,\n  \"athlete_id\": 1,\n  \"unknown_athlete_name\": \"\",\n  \"time\": \"20:15\",\n  \"pr_improvement\": \"-2:30\",\n  \"notes\": \"Updated notes\",\n  \"position\": 4,\n  \"is_pr\": true,\n  \"tags\": [\"season_best\"],\n  \"flagged\": false,\n  \"flag_reason\": \"\",\n  \"email_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/race_results/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["race_results", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Race Result",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/race_results/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["race_results", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workouts",
+      "item": [
+        {
+          "name": "List Workouts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/workouts?date=&location=&email_id=&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["workouts"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "",
+                  "description": "Filter by workout date"
+                },
+                {
+                  "key": "location",
+                  "value": "",
+                  "description": "Filter by location"
+                },
+                {
+                  "key": "email_id",
+                  "value": "",
+                  "description": "Filter by source email"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Workout by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/workouts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["workouts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Workout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2025-12-12\",\n  \"location\": \"Central Park\",\n  \"start_time\": \"18:00:00\",\n  \"coach_notes\": \"Easy pace run\",\n  \"email_id\": 1,\n  \"groups\": [\n    {\n      \"group_name\": \"Main Group\",\n      \"description\": \"Easy run group\",\n      \"segments\": [\n        {\n          \"segment_type\": \"warmup\",\n          \"repetitions\": 1,\n          \"rest\": \"0:00\",\n          \"targets\": \"Easy pace\"\n        },\n        {\n          \"segment_type\": \"run\",\n          \"repetitions\": 1,\n          \"rest\": \"0:00\",\n          \"targets\": \"6:00/mi\"\n        },\n        {\n          \"segment_type\": \"cooldown\",\n          \"repetitions\": 1,\n          \"rest\": \"0:00\",\n          \"targets\": \"Easy pace\"\n        }\n      ]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/workouts",
+              "host": ["{{baseUrl}}"],
+              "path": ["workouts"]
+            }
+          }
+        },
+        {
+          "name": "Update Workout",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2025-12-12\",\n  \"location\": \"Central Park\",\n  \"start_time\": \"18:00:00\",\n  \"coach_notes\": \"Updated easy pace run\",\n  \"email_id\": 1,\n  \"groups\": [\n    {\n      \"group_name\": \"Main Group\",\n      \"description\": \"Easy run group\",\n      \"segments\": [\n        {\n          \"segment_type\": \"warmup\",\n          \"repetitions\": 1,\n          \"rest\": \"0:00\",\n          \"targets\": \"Easy pace\"\n        },\n        {\n          \"segment_type\": \"run\",\n          \"repetitions\": 1,\n          \"rest\": \"0:00\",\n          \"targets\": \"6:15/mi\"\n        }\n      ]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/workouts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["workouts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Workout",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/workouts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["workouts", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Athlete Nicknames",
+      "item": [
+        {
+          "name": "List Athlete Nicknames",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/athlete_nicknames?athlete_id=&nickname=&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["athlete_nicknames"],
+              "query": [
+                {
+                  "key": "athlete_id",
+                  "value": "",
+                  "description": "Filter by athlete ID"
+                },
+                {
+                  "key": "nickname",
+                  "value": "",
+                  "description": "Filter by nickname"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Nickname by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/athlete_nicknames/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["athlete_nicknames", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Nickname",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"athlete_id\": 1,\n  \"nickname\": \"Johnny\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/athlete_nicknames",
+              "host": ["{{baseUrl}}"],
+              "path": ["athlete_nicknames"]
+            }
+          }
+        },
+        {
+          "name": "Update Nickname",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"athlete_id\": 1,\n  \"nickname\": \"Johnny D\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/athlete_nicknames/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["athlete_nicknames", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Nickname",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/athlete_nicknames/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["athlete_nicknames", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Emails",
+      "item": [
+        {
+          "name": "List Emails",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminApiKey}}",
+                "description": "Admin API key required"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/emails?title=&sender=&recipient=&date=&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["emails"],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "",
+                  "description": "Filter by email title"
+                },
+                {
+                  "key": "sender",
+                  "value": "",
+                  "description": "Filter by sender email"
+                },
+                {
+                  "key": "recipient",
+                  "value": "",
+                  "description": "Filter by recipient email"
+                },
+                {
+                  "key": "date",
+                  "value": "",
+                  "description": "Filter by email date"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "List all processed emails (Admin only)"
+          }
+        },
+        {
+          "name": "Get Email by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminApiKey}}",
+                "description": "Admin API key required"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/emails/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["emails", "1"]
+            },
+            "description": "Get a specific email by ID (Admin only)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Review Flags",
+      "item": [
+        {
+          "name": "List Review Flags",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminApiKey}}",
+                "description": "Admin API key required"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review_flags?resolved=false&flag_type=&entity_type=&email_id=&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["review_flags"],
+              "query": [
+                {
+                  "key": "resolved",
+                  "value": "false",
+                  "description": "Filter by resolution status"
+                },
+                {
+                  "key": "flag_type",
+                  "value": "",
+                  "description": "Filter by flag type"
+                },
+                {
+                  "key": "entity_type",
+                  "value": "",
+                  "description": "Filter by entity type"
+                },
+                {
+                  "key": "email_id",
+                  "value": "",
+                  "description": "Filter by source email"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "List all review flags (Admin only)"
+          }
+        },
+        {
+          "name": "Get Review Flag by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminApiKey}}",
+                "description": "Admin API key required"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review_flags/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["review_flags", "1"]
+            },
+            "description": "Get a specific review flag by ID (Admin only)"
+          }
+        },
+        {
+          "name": "Resolve Review Flag",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminApiKey}}",
+                "description": "Admin API key required"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resolved_by\": \"admin@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/review_flags/1/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["review_flags", "1", "resolve"]
+            },
+            "description": "Mark a review flag as resolved (Admin only)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Sync Emails",
+      "item": [
+        {
+          "name": "Sync Emails",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminApiKey}}",
+                "description": "Admin API key required"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"start_date\": \"2025-01-01\",\n  \"sender\": \"coach@runningclub.com\",\n  \"recipient\": \"results@runningclub.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sync_emails",
+              "host": ["{{baseUrl}}"],
+              "path": ["sync_emails"]
+            },
+            "description": "Fetch, parse, and populate database from emails (Admin only)"
+          }
+        }
+      ]
+    }
+  ]
+}
