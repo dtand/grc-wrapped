@@ -32,6 +32,9 @@ WORKDIR /root/
 # Copy the binary from builder
 COPY --from=builder /grc-api .
 
+# Copy resources directory
+COPY --from=builder /app/resources ./resources
+
 # Expose port
 EXPOSE 8080
 
