@@ -10,8 +10,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 
-	"grcapi/internal/db"
-	"grcapi/internal/models"
+	"github.com/grcwrapped/grcapi/internal/db"
+	"github.com/grcwrapped/grcapi/internal/models"
 )
 
 type WorkoutsHandler struct {

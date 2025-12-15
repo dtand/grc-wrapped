@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"grcapi/internal/service"
+	"github.com/grcwrapped/grcapi/internal/service"
 	"log"
 	"net/http"
 )

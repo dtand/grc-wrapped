@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"grcapi/config"
+	"github.com/grcwrapped/grcapi/config"
 
 	"github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"

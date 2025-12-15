@@ -1,4 +1,4 @@
-module grcapi
+module github.com/grcwrapped/grcapi
 
 go 1.22
 

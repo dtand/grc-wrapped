@@ -2,8 +2,8 @@ package api
 
 import (
 	"encoding/json"
-	"grcapi/internal/db"
-	"grcapi/internal/models"
+	"github.com/grcwrapped/grcapi/internal/db"
+	"github.com/grcwrapped/grcapi/internal/models"
 	"log"
 	"net/http"
 	"strconv"

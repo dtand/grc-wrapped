@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"grcapi/config"
-	"grcapi/internal/api"
-	"grcapi/internal/db"
-	"grcapi/internal/service"
+	"github.com/grcwrapped/grcapi/config"
+	"github.com/grcwrapped/grcapi/internal/api"
+	"github.com/grcwrapped/grcapi/internal/db"
+	"github.com/grcwrapped/grcapi/internal/service"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"

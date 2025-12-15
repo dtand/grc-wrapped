@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"grcapi/config"
-	"grcapi/internal/db"
-	"grcapi/internal/models"
+	"github.com/grcwrapped/grcapi/config"
+	"github.com/grcwrapped/grcapi/internal/db"
+	"github.com/grcwrapped/grcapi/internal/models"
 )
 
 // Logger provides leveled logging
