@@ -1,6 +1,7 @@
 package config
 
 import (
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -25,19 +26,53 @@ type Config struct {
 	RetrySleepDuration time.Duration
 	LogLevel           string
 	SleepBetweenEmails time.Duration
+	AllowedOrigins     []string
 }
 
 // LoadConfig loads configuration from .env file and environment variables
 func LoadConfig() *Config {
 	_ = godotenv.Load() // Loads .env file if present
 
+	// Heroku uses PORT, but allow SERVER_PORT as fallback for local dev
+	port := getEnv("PORT", "")
+	if port == "" {
+		port = getEnv("SERVER_PORT", "8080")
+	}
+
+	// Parse DATABASE_URL if present (Heroku format)
+	dbHost := getEnv("DB_HOST", "localhost")
+	dbPort := getEnv("DB_PORT", "5432")
+	dbUser := getEnv("DB_USER", "grcuser")
+	dbPassword := getEnv("DB_PASSWORD", "grcpass")
+	dbName := getEnv("DB_NAME", "grcdb")
+
+	if databaseURL := getEnv("DATABASE_URL", ""); databaseURL != "" {
+		// Parse Heroku DATABASE_URL: postgres://user:pass@host:port/dbname
+		if u, err := url.Parse(databaseURL); err == nil {
+			if u.User != nil {
+				dbUser = u.User.Username()
+				if pass, ok := u.User.Password(); ok {
+					dbPassword = pass
+				}
+			}
+			if u.Host != "" {
+				parts := strings.Split(u.Host, ":")
+				dbHost = parts[0]
+				if len(parts) > 1 {
+					dbPort = parts[1]
+				}
+			}
+			dbName = strings.TrimPrefix(u.Path, "/")
+		}
+	}
+
 	cfg := &Config{
-		ServerPort:      getEnv("SERVER_PORT", "8080"),
-		DBHost:          getEnv("DB_HOST", "localhost"),
-		DBPort:          getEnv("DB_PORT", "5432"),
-		DBUser:          getEnv("DB_USER", "grcuser"),
-		DBPassword:      getEnv("DB_PASSWORD", "grcpass"),
-		DBName:          getEnv("DB_NAME", "grcdb"),
+		ServerPort:      port,
+		DBHost:          dbHost,
+		DBPort:          dbPort,
+		DBUser:          dbUser,
+		DBPassword:      dbPassword,
+		DBName:          dbName,
 		AdminAPIKey:     getEnv("ADMIN_API_KEY", ""),
 		AnthropicAPIKey: getEnv("ANTHROPIC_API_KEY", ""),
 		GmailEmail:      getEnv("GMAIL_EMAIL", ""),
@@ -70,6 +105,13 @@ func LoadConfig() *Config {
 
 	// Set LogLevel
 	cfg.LogLevel = getEnv("LOG_LEVEL", "info")
+
+	// Parse AllowedOrigins (comma-separated)
+	originsStr := getEnv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000")
+	cfg.AllowedOrigins = strings.Split(originsStr, ",")
+	for i := range cfg.AllowedOrigins {
+		cfg.AllowedOrigins[i] = strings.TrimSpace(cfg.AllowedOrigins[i])
+	}
 
 	return cfg
 }

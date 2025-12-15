@@ -1,6 +1,6 @@
 module grc-api
 
-go 1.24.0
+go 1.22
 
 require (
 	github.com/anthropics/anthropic-sdk-go v1.9.0
