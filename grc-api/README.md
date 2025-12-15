@@ -167,3 +167,4 @@ The API will be available at `http://localhost:8080`
 - CORS is enabled for `localhost:5173` and `localhost:3000`
 - All timestamps are in UTC
 - Boolean fields support `true`/`false` query parameter values
+# Heroku deployment
