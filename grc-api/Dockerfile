@@ -16,6 +16,10 @@ RUN go mod download
 # Copy source code
 COPY . .
 
+# Debug: Check module info
+RUN go env GOMOD
+RUN go list -m
+
 # Build the application - use module-aware build
 RUN go build -mod=readonly -v -o /grc-api .
 
