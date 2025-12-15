@@ -16,14 +16,8 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Debug: Check module info
-RUN go env GOMOD
-RUN go list -m
-RUN ls -la
-RUN go mod verify
-
-# Build the application - use module-aware build without readonly to see if that helps
-RUN go build -v -o /grc-api .
+# Build the application - explicit module build
+RUN cd /app && go build -v -o /grc-api -trimpath .
 
 # Final stage
 FROM alpine:latest
