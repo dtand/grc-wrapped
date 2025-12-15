@@ -1,0 +1,5 @@
+.git
+.gitignore
+secrets/
+*.log
+debug_logs/
