@@ -206,3 +206,4 @@ docker-compose.override.yml
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+grc-api/grcapi
