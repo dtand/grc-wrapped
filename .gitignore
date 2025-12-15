@@ -5,8 +5,8 @@
 # ============================================
 # Database & Examples (exclude entire directories)
 # ============================================
-db/
-examples/
+/db/
+/examples/
 
 # ============================================
 # Secrets & Environment Variables
