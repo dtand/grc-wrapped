@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 
-	"grc-api/internal/db"
+	"grcapi/internal/db"
 )
 
 type EmailsHandler struct {

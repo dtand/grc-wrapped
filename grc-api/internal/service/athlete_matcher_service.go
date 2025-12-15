@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"grc-api/internal/db"
-	"grc-api/internal/models"
+	"grcapi/internal/db"
+	"grcapi/internal/models"
 	"strings"
 
 	"github.com/lib/pq"

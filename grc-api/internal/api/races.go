@@ -10,8 +10,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 
-	"grc-api/internal/db"
-	"grc-api/internal/models"
+	"grcapi/internal/db"
+	"grcapi/internal/models"
 )
 
 type RacesHandler struct {

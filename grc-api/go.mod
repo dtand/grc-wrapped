@@ -1,4 +1,4 @@
-module grc-api
+module grcapi
 
 go 1.22
 

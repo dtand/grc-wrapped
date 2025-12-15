@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"grc-api/internal/models"
+	"grcapi/internal/models"
 	"log"
 	"os"
 	"strings"
