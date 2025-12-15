@@ -24,7 +24,7 @@ type DB struct {
 // NewDB creates a new database connection using the provided config
 func NewDB(cfg *config.Config) (*DB, error) {
 	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
 		cfg.DBHost,
 		cfg.DBPort,
 		cfg.DBUser,
