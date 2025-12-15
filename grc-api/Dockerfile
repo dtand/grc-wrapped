@@ -16,6 +16,9 @@ RUN go mod download
 # Copy source code
 COPY . .
 
+# Debug: List files to see what was copied
+RUN ls -R /app
+
 # Build the application - explicit module build
 RUN cd /app && go build -v -o /grc-api -trimpath .
 
