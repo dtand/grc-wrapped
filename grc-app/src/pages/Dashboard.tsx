@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
         {stats && stats.popular_races.length > 0 && (
           <>
           <p className="dashboard-subtitle">We've showed up</p>
-            <ParticipationTimeline data={stats.popular_races} />
+            <ParticipationTimeline data={stats.popular_races as any} />
           </>
         )}
       </div>
