@@ -24,12 +24,13 @@ type DB struct {
 // NewDB creates a new database connection using the provided config
 func NewDB(cfg *config.Config) (*DB, error) {
 	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.DBHost,
 		cfg.DBPort,
 		cfg.DBUser,
 		cfg.DBPassword,
 		cfg.DBName,
+		cfg.DBSSLMode,
 	)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
@@ -1369,7 +1370,7 @@ func (db *DB) GetAllAthleteDetails(ctx context.Context) ([]AthleteDetailsRespons
 func (db *DB) getAthleteRacePerformances(ctx context.Context, athleteID int) ([]RacePerformanceWithRace, error) {
 	query := `
 		SELECT 
-			rr.id, rr.race_id, rr.athlete_id, rr.unknown_athlete_name, rr.time, rr.pr_improvement, rr.notes, rr.position, rr.is_pr, rr.is_club_record, rr.tags, rr.flagged, rr.flag_reason, rr.email_id, rr.date_recorded,
+			rr.id, rr.race_id, rr.athlete_id, rr.unknown_athlete_name, rr.time, rr.pr_improvement, rr.notes, rr.position, rr.is_pr, rr.is_club_record, rr.tags, rr.flagged, rr.flag_reason, rr.email_id, rr.date_recorded, rr.actual_distance,
 			r.id, r.name, r.date, r.year, r.distance, r.notes, r.email_id
 		FROM race_results rr
 		JOIN races r ON rr.race_id = r.id
@@ -1391,7 +1392,7 @@ func (db *DB) getAthleteRacePerformances(ctx context.Context, athleteID int) ([]
 		var tags pq.StringArray
 
 		err := rows.Scan(
-			&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &rr.IsClubRecord, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded,
+			&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &rr.IsClubRecord, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded, &rr.ActualDistance,
 			&r.ID, &r.Name, &r.Date, &r.Year, &r.Distance, &r.Notes, &r.EmailID,
 		)
 		if err != nil {

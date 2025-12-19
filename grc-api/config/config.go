@@ -18,6 +18,7 @@ type Config struct {
 	DBUser             string
 	DBPassword         string
 	DBName             string
+	DBSSLMode          string
 	AdminAPIKey        string
 	AnthropicAPIKey    string
 	GmailEmail         string
@@ -66,6 +67,12 @@ func LoadConfig() *Config {
 		}
 	}
 
+	// Default SSL mode: require for production (DATABASE_URL present), disable for local dev
+	defaultSSLMode := "disable"
+	if getEnv("DATABASE_URL", "") != "" {
+		defaultSSLMode = "require"
+	}
+
 	cfg := &Config{
 		ServerPort:      port,
 		DBHost:          dbHost,
@@ -73,6 +80,7 @@ func LoadConfig() *Config {
 		DBUser:          dbUser,
 		DBPassword:      dbPassword,
 		DBName:          dbName,
+		DBSSLMode:       getEnv("DB_SSLMODE", defaultSSLMode),
 		AdminAPIKey:     getEnv("ADMIN_API_KEY", ""),
 		AnthropicAPIKey: getEnv("ANTHROPIC_API_KEY", ""),
 		GmailEmail:      getEnv("GMAIL_EMAIL", ""),
