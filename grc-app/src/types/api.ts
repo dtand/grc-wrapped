@@ -33,6 +33,7 @@ export interface RaceResult {
   flag_reason?: string;
   email_id: number;
   date_recorded?: string;
+  actual_distance?: string;
 }
 
 export interface WorkoutSegment {

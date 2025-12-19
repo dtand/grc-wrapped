@@ -60,7 +60,7 @@ const Races: React.FC = () => {
             athlete: athleteName,
             race: extractValue(perf.race.name),
             dateRecorded: extractValue(perf.race_result.date_recorded || perf.race.date),
-            distance: extractValue(perf.race.distance),
+            distance: extractValue(perf.race_result.actual_distance || perf.race.distance),
             time: extractValue(perf.race_result.time),
             isPr: perf.race_result.is_pr || false,
             isClubRecord: perf.race_result.is_club_record || false,
