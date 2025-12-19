@@ -51,10 +51,11 @@ func (s *SyncEmailService) processRaceResults(ctx context.Context, tx *sql.Tx, r
 			unknownName = ""
 		}
 
-		// Insert race result
+		// Insert race result with actual_distance (will be populated by migration script)
+		actualDistance := ""
 		raceResultID, err := s.DB.InsertRaceResult(
 			ctx, tx, raceID, athleteIDNull, unknownName, parsedResult.Time, positionVal,
-			parsedResult.IsPR, parsedResult.Notes, parsedResult.Tags, flagged, flagReason, emailID,
+			parsedResult.IsPR, parsedResult.Notes, parsedResult.Tags, flagged, flagReason, emailID, actualDistance,
 		)
 		if err != nil {
 			return 0, err

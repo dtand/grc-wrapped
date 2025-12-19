@@ -198,7 +198,11 @@ func (h *RaceResultsHandler) CreateRaceResult(w http.ResponseWriter, r *http.Req
 	}
 
 	// Insert the race result
-	id, err := h.db.InsertRaceResultAPI(ctx, req.RaceID, req.AthleteID, req.UnknownAthleteName, req.Time, req.PRImprovement, req.Notes, req.Position, req.IsPR, req.IsClubRecord, req.Tags, req.Flagged, req.FlagReason, req.EmailID)
+	actualDistance := ""
+	if req.ActualDistance.Valid {
+		actualDistance = req.ActualDistance.String
+	}
+	id, err := h.db.InsertRaceResultAPI(ctx, req.RaceID, req.AthleteID, req.UnknownAthleteName, req.Time, req.PRImprovement, req.Notes, req.Position, req.IsPR, req.IsClubRecord, req.Tags, req.Flagged, req.FlagReason, req.EmailID, actualDistance)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to create race result: %v", err), http.StatusInternalServerError)
 		return
@@ -245,7 +249,11 @@ func (h *RaceResultsHandler) UpdateRaceResult(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = h.db.UpdateRaceResult(ctx, id, req.RaceID, req.AthleteID, req.UnknownAthleteName, req.Time, req.PRImprovement, req.Notes, req.Position, req.IsPR, req.IsClubRecord, req.Tags, req.Flagged, req.FlagReason, req.EmailID)
+	actualDistance := ""
+	if req.ActualDistance.Valid {
+		actualDistance = req.ActualDistance.String
+	}
+	err = h.db.UpdateRaceResult(ctx, id, req.RaceID, req.AthleteID, req.UnknownAthleteName, req.Time, req.PRImprovement, req.Notes, req.Position, req.IsPR, req.IsClubRecord, req.Tags, req.Flagged, req.FlagReason, req.EmailID, actualDistance)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update race result: %v", err), http.StatusInternalServerError)
 		return

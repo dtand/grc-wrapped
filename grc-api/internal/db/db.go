@@ -396,14 +396,14 @@ func (db *DB) InsertRace(ctx context.Context, tx *sql.Tx, name, date, distance, 
 }
 
 // InsertRaceResult creates a race result record and returns its ID
-func (db *DB) InsertRaceResult(ctx context.Context, tx *sql.Tx, raceID int, athleteID sql.NullInt64, unknownName, time string, position sql.NullInt64, isPR bool, notes string, tags []string, flagged bool, flagReason string, emailID int) (int, error) {
+func (db *DB) InsertRaceResult(ctx context.Context, tx *sql.Tx, raceID int, athleteID sql.NullInt64, unknownName, time string, position sql.NullInt64, isPR bool, notes string, tags []string, flagged bool, flagReason string, emailID int, actualDistance string) (int, error) {
 	var raceResultID int
 	query := `
 		INSERT INTO race_results (
 			race_id, athlete_id, unknown_athlete_name, time, position, is_pr, notes, tags, 
-			flagged, flag_reason, email_id, date_recorded
+			flagged, flag_reason, email_id, date_recorded, actual_distance
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, (SELECT date FROM emails WHERE id = $11))
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, (SELECT date FROM emails WHERE id = $11), $12)
 		RETURNING id
 	`
 	err := tx.QueryRowContext(
@@ -420,6 +420,7 @@ func (db *DB) InsertRaceResult(ctx context.Context, tx *sql.Tx, raceID int, athl
 		flagged,
 		flagReason,
 		emailID,
+		actualDistance,
 	).Scan(&raceResultID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert race result: %w", err)
@@ -761,14 +762,14 @@ func (db *DB) DeleteRace(ctx context.Context, id int) error {
 }
 
 // InsertRaceResultAPI creates a new race result in the database (API version without transaction)
-func (db *DB) InsertRaceResultAPI(ctx context.Context, raceID int, athleteID *int, unknownAthleteName, time string, prImprovement, notes sql.NullString, position *int, isPR bool, isClubRecord bool, tags []string, flagged bool, flagReason sql.NullString, emailID int) (int, error) {
+func (db *DB) InsertRaceResultAPI(ctx context.Context, raceID int, athleteID *int, unknownAthleteName, time string, prImprovement, notes sql.NullString, position *int, isPR bool, isClubRecord bool, tags []string, flagged bool, flagReason sql.NullString, emailID int, actualDistance string) (int, error) {
 	query := `
-	       INSERT INTO race_results (race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, is_club_record, tags, flagged, flag_reason, email_id, date_recorded)
-	       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, (SELECT date FROM emails WHERE id = $13))
+	       INSERT INTO race_results (race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, is_club_record, tags, flagged, flag_reason, email_id, date_recorded, actual_distance)
+	       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, (SELECT date FROM emails WHERE id = $13), $14)
 	       RETURNING id
        `
 	var id int
-	err := db.QueryRowContext(ctx, query, raceID, athleteID, unknownAthleteName, time, prImprovement, notes, position, isPR, isClubRecord, pq.Array(tags), flagged, flagReason, emailID).Scan(&id)
+	err := db.QueryRowContext(ctx, query, raceID, athleteID, unknownAthleteName, time, prImprovement, notes, position, isPR, isClubRecord, pq.Array(tags), flagged, flagReason, emailID, actualDistance).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert race result: %w", err)
 	}
@@ -843,7 +844,7 @@ func (db *DB) GetRaceResults(ctx context.Context, athleteID, raceID *int, isPR *
 	}
 
 	query := fmt.Sprintf(`
-		       SELECT id, race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, is_club_record, tags, flagged, flag_reason, email_id, date_recorded
+		       SELECT id, race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, is_club_record, tags, flagged, flag_reason, email_id, date_recorded, actual_distance
 		       FROM race_results
 		       %s
 		       ORDER BY id
@@ -861,7 +862,7 @@ func (db *DB) GetRaceResults(ctx context.Context, athleteID, raceID *int, isPR *
 	for rows.Next() {
 		var rr models.RaceResult
 		var tags pq.StringArray
-		err := rows.Scan(&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &rr.IsClubRecord, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded)
+		err := rows.Scan(&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &rr.IsClubRecord, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded, &rr.ActualDistance)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan race result: %w", err)
 		}
@@ -949,10 +950,10 @@ func (db *DB) GetRaceResultsCount(ctx context.Context, athleteID, raceID *int, i
 
 // GetRaceResultByID retrieves a single race result by ID
 func (db *DB) GetRaceResultByID(ctx context.Context, id int) (*models.RaceResult, error) {
-	query := `SELECT id, race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, is_club_record, tags, flagged, flag_reason, email_id, date_recorded FROM race_results WHERE id = $1`
+	query := `SELECT id, race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, is_club_record, tags, flagged, flag_reason, email_id, date_recorded, actual_distance FROM race_results WHERE id = $1`
 	var rr models.RaceResult
 	var tags pq.StringArray
-	err := db.QueryRowContext(ctx, query, id).Scan(&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &rr.IsClubRecord, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded)
+	err := db.QueryRowContext(ctx, query, id).Scan(&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &rr.IsClubRecord, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded, &rr.ActualDistance)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -964,13 +965,13 @@ func (db *DB) GetRaceResultByID(ctx context.Context, id int) (*models.RaceResult
 }
 
 // UpdateRaceResult updates an existing race result
-func (db *DB) UpdateRaceResult(ctx context.Context, id, raceID int, athleteID *int, unknownAthleteName, time string, prImprovement, notes sql.NullString, position *int, isPR bool, isClubRecord bool, tags []string, flagged bool, flagReason sql.NullString, emailID int) error {
+func (db *DB) UpdateRaceResult(ctx context.Context, id, raceID int, athleteID *int, unknownAthleteName, time string, prImprovement, notes sql.NullString, position *int, isPR bool, isClubRecord bool, tags []string, flagged bool, flagReason sql.NullString, emailID int, actualDistance string) error {
 	query := `
 	       UPDATE race_results
-	       SET race_id = $2, athlete_id = $3, unknown_athlete_name = $4, time = $5, pr_improvement = $6, notes = $7, position = $8, is_pr = $9, is_club_record = $10, tags = $11, flagged = $12, flag_reason = $13, email_id = $14, date_recorded = (SELECT date FROM emails WHERE id = $14)
+	       SET race_id = $2, athlete_id = $3, unknown_athlete_name = $4, time = $5, pr_improvement = $6, notes = $7, position = $8, is_pr = $9, is_club_record = $10, tags = $11, flagged = $12, flag_reason = $13, email_id = $14, date_recorded = (SELECT date FROM emails WHERE id = $14), actual_distance = $15
 	       WHERE id = $1
        `
-	_, err := db.ExecContext(ctx, query, id, raceID, athleteID, unknownAthleteName, time, prImprovement, notes, position, isPR, isClubRecord, pq.Array(tags), flagged, flagReason, emailID)
+	_, err := db.ExecContext(ctx, query, id, raceID, athleteID, unknownAthleteName, time, prImprovement, notes, position, isPR, isClubRecord, pq.Array(tags), flagged, flagReason, emailID, actualDistance)
 	if err != nil {
 		return fmt.Errorf("failed to update race result: %w", err)
 	}
@@ -1511,7 +1512,7 @@ func (db *DB) getRacesByEmailID(ctx context.Context, emailID int) ([]*models.Rac
 
 // getRaceResultsByEmailID gets all race results associated with a specific email
 func (db *DB) getRaceResultsByEmailID(ctx context.Context, emailID int) ([]*models.RaceResult, error) {
-	query := `SELECT id, race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, tags, flagged, flag_reason, email_id, date_recorded FROM race_results WHERE email_id = $1 ORDER BY id`
+	query := `SELECT id, race_id, athlete_id, unknown_athlete_name, time, pr_improvement, notes, position, is_pr, tags, flagged, flag_reason, email_id, date_recorded, actual_distance FROM race_results WHERE email_id = $1 ORDER BY id`
 
 	rows, err := db.QueryContext(ctx, query, emailID)
 	if err != nil {
@@ -1523,7 +1524,7 @@ func (db *DB) getRaceResultsByEmailID(ctx context.Context, emailID int) ([]*mode
 	for rows.Next() {
 		var rr models.RaceResult
 		var tags pq.StringArray
-		err := rows.Scan(&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded)
+		err := rows.Scan(&rr.ID, &rr.RaceID, &rr.AthleteID, &rr.UnknownAthleteName, &rr.Time, &rr.PRImprovement, &rr.Notes, &rr.Position, &rr.IsPR, &tags, &rr.Flagged, &rr.FlagReason, &rr.EmailID, &rr.DateRecorded, &rr.ActualDistance)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan race result: %w", err)
 		}

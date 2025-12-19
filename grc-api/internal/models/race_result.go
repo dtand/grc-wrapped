@@ -18,4 +18,5 @@ type RaceResult struct {
 	FlagReason         sql.NullString `db:"flag_reason" json:"flag_reason,omitempty"`
 	EmailID            int            `db:"email_id" json:"email_id"`
 	DateRecorded       sql.NullString `db:"date_recorded" json:"date_recorded,omitempty"`
+	ActualDistance     sql.NullString `db:"actual_distance" json:"actual_distance,omitempty"`
 }
