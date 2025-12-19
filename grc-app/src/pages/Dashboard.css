@@ -4,10 +4,11 @@
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   background: #f8f9fa;
-  height: 100vh;
-  overflow-y: hidden;
+  min-height: 100vh;
+  padding-bottom: 3rem;
+  overflow-y: auto;
   font-family: 'Inter', sans-serif;
 }
 
@@ -125,4 +126,113 @@
 .timeline-tooltip-date {
   font-size: 11px;
   opacity: 0.85;
+}
+
+.dashboard-section {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.dashboard-three-column-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1600px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.dashboard-section-column {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+.performance-list, .distance-breakdown-list, .debuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.performance-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+
+.performance-item:hover {
+  background: #e9ecef;
+}
+
+.performance-athlete {
+  font-weight: 600;
+  color: #2d7ff9;
+  font-size: 0.95rem;
+}
+
+.performance-distance {
+  font-weight: 500;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.performance-time {
+  font-weight: 700;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+.distance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.75rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.distance-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.distance-count {
+  color: #2d7ff9;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+}
+
+.debut-item {
+  padding: 0.65rem 0.75rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  text-align: left;
 }

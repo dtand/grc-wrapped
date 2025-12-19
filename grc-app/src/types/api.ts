@@ -190,11 +190,36 @@ export interface ReviewFlagResolveForm {
 export interface YearlyStats {
   personal_bests: number; 
   races_competed: number; 
-  club_records: number; 
+  club_records: PerformanceList; 
   popular_races: PopularRaceEntry[];
+  distance_breakdown: DistanceBreakdownEntry[];
+  top_list_performances: PerformanceList;
+  races_won: number;
+  grc_debuts: DebutEntry[];
+}
+
+export interface PerformanceList {
+  count: number;
+  performances: PerformanceDetail[];
+}
+
+export interface PerformanceDetail {
+  athlete_id: number;
+  athlete_name: string;
+  race_distance: string;
+  time: string;
 }
 
 export interface PopularRaceEntry {
   name: string;
   count: number;
+}
+
+export interface DistanceBreakdownEntry {
+  distance: string;
+  total_races: number;
+}
+
+export interface DebutEntry {
+  athlete_name: string;
 }

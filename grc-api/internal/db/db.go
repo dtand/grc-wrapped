@@ -1578,10 +1578,39 @@ func (db *DB) GetYearlyStats(ctx context.Context) (*models.YearlyStats, error) {
 		return nil, err
 	}
 
-	// Count club records (using is_club_record flag)
-	err = db.QueryRowContext(ctx, `SELECT COUNT(*) FROM race_results WHERE is_club_record = TRUE AND date_recorded IS NOT NULL AND EXTRACT(YEAR FROM date_recorded) = $1`, year).Scan(&stats.ClubRecords)
+	// Count club records (using is_club_record flag) and get performance details
+	var clubRecordCount int
+	err = db.QueryRowContext(ctx, `SELECT COUNT(*) FROM race_results WHERE is_club_record = TRUE AND date_recorded IS NOT NULL AND EXTRACT(YEAR FROM date_recorded) = $1`, year).Scan(&clubRecordCount)
 	if err != nil {
 		return nil, err
+	}
+	stats.ClubRecords.Count = clubRecordCount
+
+	// Get club record performance details
+	clubRecordRows, err := db.QueryContext(ctx, `
+		SELECT 
+			rr.athlete_id,
+			a.name,
+			COALESCE(rr.actual_distance, r.distance, 'Unknown') as race_distance,
+			rr.time
+		FROM race_results rr
+		JOIN athletes a ON rr.athlete_id = a.id
+		JOIN races r ON rr.race_id = r.id
+		WHERE rr.is_club_record = TRUE
+			AND rr.date_recorded IS NOT NULL
+			AND EXTRACT(YEAR FROM rr.date_recorded) = $1
+		ORDER BY a.name, rr.date_recorded
+	`, year)
+	if err != nil {
+		return nil, err
+	}
+	defer clubRecordRows.Close()
+	for clubRecordRows.Next() {
+		var detail models.PerformanceDetail
+		if err := clubRecordRows.Scan(&detail.AthleteID, &detail.AthleteName, &detail.RaceDistance, &detail.Time); err != nil {
+			return nil, err
+		}
+		stats.ClubRecords.Performances = append(stats.ClubRecords.Performances, detail)
 	}
 
 	// Popular races: top 10 races by number of participants (race_results per race_id)
@@ -1596,6 +1625,105 @@ func (db *DB) GetYearlyStats(ctx context.Context) (*models.YearlyStats, error) {
 			return nil, err
 		}
 		stats.PopularRaces = append(stats.PopularRaces, entry)
+	}
+
+	// Distance breakdown: count races by actual_distance, sorted by count descending
+	distanceRows, err := db.QueryContext(ctx, `
+		SELECT 
+			COALESCE(actual_distance, 'Unknown') as distance,
+			COUNT(*) as total_races
+		FROM race_results 
+		WHERE date_recorded IS NOT NULL 
+			AND EXTRACT(YEAR FROM date_recorded) = $1
+			AND actual_distance IS NOT NULL
+		GROUP BY actual_distance
+		ORDER BY total_races DESC, distance
+	`, year)
+	if err != nil {
+		return nil, err
+	}
+	defer distanceRows.Close()
+	for distanceRows.Next() {
+		var entry models.DistanceBreakdownEntry
+		if err := distanceRows.Scan(&entry.Distance, &entry.TotalRaces); err != nil {
+			return nil, err
+		}
+		stats.DistanceBreakdown = append(stats.DistanceBreakdown, entry)
+	}
+
+	// Top list performances: count race results with "GRC all-time" in notes
+	var topListCount int
+	err = db.QueryRowContext(ctx, `
+		SELECT COUNT(*) 
+		FROM race_results 
+		WHERE (notes ILIKE '%GRC all-time%' OR notes ILIKE '%all-time%' OR notes ILIKE '%all-time list%' OR notes ILIKE '%GRC list%')
+			AND date_recorded IS NOT NULL 
+			AND EXTRACT(YEAR FROM date_recorded) = $1
+	`, year).Scan(&topListCount)
+	if err != nil {
+		return nil, err
+	}
+	stats.TopListPerformances.Count = topListCount
+
+	// Get top list performance details
+	topListRows, err := db.QueryContext(ctx, `
+		SELECT 
+			rr.athlete_id,
+			a.name,
+			COALESCE(rr.actual_distance, r.distance, 'Unknown') as race_distance,
+			rr.time
+		FROM race_results rr
+		JOIN athletes a ON rr.athlete_id = a.id
+		JOIN races r ON rr.race_id = r.id
+		WHERE rr.notes ILIKE '%GRC all-time%'
+			AND rr.date_recorded IS NOT NULL
+			AND EXTRACT(YEAR FROM rr.date_recorded) = $1
+		ORDER BY a.name, rr.date_recorded
+	`, year)
+	if err != nil {
+		return nil, err
+	}
+	defer topListRows.Close()
+	for topListRows.Next() {
+		var detail models.PerformanceDetail
+		if err := topListRows.Scan(&detail.AthleteID, &detail.AthleteName, &detail.RaceDistance, &detail.Time); err != nil {
+			return nil, err
+		}
+		stats.TopListPerformances.Performances = append(stats.TopListPerformances.Performances, detail)
+	}
+
+	// Races won: count race results where position = 1
+	err = db.QueryRowContext(ctx, `
+		SELECT COUNT(*) 
+		FROM race_results 
+		WHERE position = 1 
+			AND date_recorded IS NOT NULL 
+			AND EXTRACT(YEAR FROM date_recorded) = $1
+	`, year).Scan(&stats.RacesWon)
+	if err != nil {
+		return nil, err
+	}
+
+	// GRC debuts: find athletes with "GRC debut" in notes
+	debutRows, err := db.QueryContext(ctx, `
+		SELECT DISTINCT a.name
+		FROM race_results rr
+		JOIN athletes a ON rr.athlete_id = a.id
+		WHERE rr.notes ILIKE '%GRC debut%'
+			AND rr.date_recorded IS NOT NULL
+			AND EXTRACT(YEAR FROM rr.date_recorded) = $1
+		ORDER BY a.name
+	`, year)
+	if err != nil {
+		return nil, err
+	}
+	defer debutRows.Close()
+	for debutRows.Next() {
+		var entry models.DebutEntry
+		if err := debutRows.Scan(&entry.AthleteName); err != nil {
+			return nil, err
+		}
+		stats.GRCDebuts = append(stats.GRCDebuts, entry)
 	}
 
 	return &stats, nil
