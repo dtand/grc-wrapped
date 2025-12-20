@@ -5,85 +5,66 @@ This document describes the deployment process for the GRC Running Club applicat
 ## Prerequisites
 
 - [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) installed and running (for API deployment)
 - Git repository with two Heroku remotes configured:
   - `heroku` → `https://git.heroku.com/grc-api-backend.git` (API)
   - `heroku-frontend` → `https://git.heroku.com/grc-app-frontend.git` (Frontend)
 
 ## Architecture Overview
 
-- **API Backend**: Go application deployed as Docker container to `grc-api-backend`
+- **API Backend**: Go application deployed using Go buildpack to `grc-api-backend`
 - **Frontend**: React/Vite application with Nginx deployed to `grc-app-frontend`
 - **Database**: PostgreSQL on Heroku (attached to API backend)
 - **Deployment Method**: 
-  - API: Container Registry (Docker)
-  - Frontend: Buildpack (Node.js + Nginx)
+  - API: Go Buildpack (heroku/go)
+  - Frontend: Node.js Buildpack + Nginx
+- **Stack**: heroku-24
 
 ## API Deployment (grc-api)
 
-The API uses Docker containers and is deployed using Heroku's Container Registry.
+The API uses Heroku's Go buildpack for automatic compilation and deployment.
 
 ### Steps
 
-1. **Navigate to API directory:**
+1. **Navigate to workspace root:**
    ```bash
-   cd grc-api
+   cd /Users/danielanderson/Desktop/Projects/grc-wrapped
    ```
 
-2. **Ensure Docker is running:**
+2. **Commit your changes:**
    ```bash
-   docker ps
-   ```
-   If Docker isn't running, start Docker Desktop:
-   ```bash
-   open -a Docker
+   git add grc-api/
+   git commit -m "Description of changes"
    ```
 
-3. **Build and push container:**
+3. **Deploy using git subtree:**
    ```bash
-   heroku container:push web --app grc-api-backend
+   git subtree push --prefix grc-api heroku main
    ```
    
    This command:
-   - Builds the Docker image using `Dockerfile`
-   - Tags it as `registry.heroku.com/grc-api-backend/web`
-   - Pushes to Heroku Container Registry
+   - Pushes only the `grc-api/` subdirectory to Heroku
+   - Heroku detects Go project via `go.mod`
+   - Buildpack compiles the Go binary to `bin/grcapi`
+   - Procfile starts the binary
 
-4. **Release the container:**
-   ```bash
-   heroku container:release web --app grc-api-backend
-   ```
-
-5. **Verify deployment:**
+4. **Verify deployment:**
    ```bash
    heroku logs --tail --app grc-api-backend
    ```
 
-### Alternative: Manual Docker Build
-
-If `heroku container:push` has issues, you can build and push manually:
-
-```bash
-# Build for linux/amd64 platform
-docker buildx build --platform linux/amd64 \
-  -t registry.heroku.com/grc-api-backend/web .
-
-# Push to Heroku registry
-docker push registry.heroku.com/grc-api-backend/web
-
-# Release
-heroku container:release web --app grc-api-backend
-```
+5. **Check API health:**
+   ```bash
+   curl https://grc-api-backend-f7a3149f8225.herokuapp.com/api/v1/yearly_stats
+   ```
 
 ### Configuration Files
 
-- `Dockerfile` - Multi-stage build (Go builder + Alpine runtime)
-- `heroku.yml` - Declares Docker build method:
-  ```yaml
-  build:
-    docker:
-      web: Dockerfile
+- `go.mod` / `go.sum` - Go module dependencies
+- `Procfile` - Process definition:
   ```
+  web: bin/grcapi
+  ```
+- Stack: heroku-24 with heroku/go buildpack
 
 ## Frontend Deployment (grc-app)
 
@@ -192,9 +173,8 @@ heroku pg:psql --app grc-api-backend < migration.sql
 
 ### 3. Deploy API
 ```bash
-cd grc-api
-heroku container:push web --app grc-api-backend
-heroku container:release web --app grc-api-backend
+cd /Users/danielanderson/Desktop/Projects/grc-wrapped
+git subtree push --prefix grc-api heroku main
 ```
 
 ### 4. Deploy Frontend
@@ -220,14 +200,15 @@ heroku logs --tail --app grc-app-frontend
 
 ### API Container Build Issues
 
-**Error**: "Cannot connect to Docker daemon"
-- **Solution**: Start Docker Desktop: `open -a Docker`
+**Error**: Binary not found during startup
+- **Solution**: Ensure Procfile references correct binary name (should match module name from go.mod)
+- **Check**: `heroku logs` for "No such file or directory" errors
 
-**Error**: "Push rejected: app does not include heroku.yml"
-- **Solution**: Ensure `heroku.yml` exists in `grc-api/` directory
+**Error**: "push rejected" when using git push
+- **Solution**: Use `git subtree push --prefix grc-api heroku main` from workspace root, not from grc-api directory
 
-**Error**: "unsupported" during docker push
-- **Solution**: Use `heroku container:release` instead of pushing to already-deployed image
+**Error**: Build fails with module errors
+- **Solution**: Ensure `go.mod` and `go.sum` are up to date: `go mod tidy`
 
 ### Frontend Build Issues
 
